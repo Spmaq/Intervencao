@@ -1,5 +1,5 @@
 # Para rodar o backend NumeracaoAPI.dll com o .NET Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS backend
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 
 # Definir o diretório de trabalho no contêiner
 WORKDIR /app
