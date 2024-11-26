@@ -1,33 +1,23 @@
-# Use a imagem do SDK do .NET para construir o projeto
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# Para rodar o backend NumeracaoAPI.dll com o .NET Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS backend
 
-# Defina o diretório de trabalho
-WORKDIR /src
-
-# Copie o arquivo .csproj para o contêiner
-COPY ["IntervencaoAPI/IntervencaoAPI.csproj", "IntervencaoAPI/"]
-
-# Restaure as dependências
-RUN dotnet restore "IntervencaoAPI/IntervencaoAPI.csproj"
-
-# Copie o restante dos arquivos
-COPY . .
-
-# Construa o projeto
-RUN dotnet build "IntervencaoAPI/IntervencaoAPI.csproj" -c Release -o /app/build
-
-# Publicação do projeto
-RUN dotnet publish "IntervencaoAPI/IntervencaoAPI.csproj" -c Release -o /app/publish
-
-# Use uma imagem do .NET Runtime para rodar o aplicativo
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+# Definir o diretório de trabalho no contêiner
 WORKDIR /app
+
+# Copiar os arquivos de publicação do backend
+COPY ../IntervencaoAPI /app
+
+# Especificar o comando para rodar a aplicação
+ENTRYPOINT ["dotnet", "NumeracaoAPI.dll"]
+
+# Usar o Nginx para servir o frontend
+FROM nginx:alpine AS web
+
+# Copiar os arquivos do frontend para o diretório padrão do Nginx
+COPY ../ /usr/share/nginx/html
+
+# Expor a porta do Nginx
 EXPOSE 80
 
-# Copie os arquivos publicados para a imagem final
-COPY --from=build /app/publish .
-
-# Defina o comando para iniciar a aplicação
-ENTRYPOINT ["dotnet", "NumeracaoAPI.dll"]
-FROM nginx:alpine AS web
-COPY ./SiteTeste /usr/share/nginx/html
+# Comando padrão para rodar o Nginx
+CMD ["nginx", "-g", "daemon off;"]
