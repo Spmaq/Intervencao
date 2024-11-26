@@ -1,5 +1,5 @@
 # Use a imagem do SDK do .NET para construir o projeto
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 # Defina o diretório de trabalho
 WORKDIR /src
@@ -20,7 +20,7 @@ RUN dotnet build "IntervencaoAPI/IntervencaoAPI.csproj" -c Release -o /app/build
 RUN dotnet publish "IntervencaoAPI/IntervencaoAPI.csproj" -c Release -o /app/publish
 
 # Use uma imagem do .NET Runtime para rodar o aplicativo
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 80
 
@@ -29,3 +29,5 @@ COPY --from=build /app/publish .
 
 # Defina o comando para iniciar a aplicação
 ENTRYPOINT ["dotnet", "NumeracaoAPI.dll"]
+FROM nginx:alpine AS web
+COPY ./SiteTeste /usr/share/nginx/html
