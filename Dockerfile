@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./IntervencaoAPI /app
 
 # Expor a porta do Nginx
-EXPOSE 5000
+EXPOSE 5040
 
 # Especificar o comando para rodar a aplicação
 ENTRYPOINT ["dotnet", "NumeracaoAPI.dll"]
